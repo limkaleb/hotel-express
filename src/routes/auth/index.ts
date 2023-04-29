@@ -12,7 +12,7 @@ router.post('/local', passport.authenticate('local'), (req, res) => {
 });
 
 router.get('/failed', (req, res) => {
-  // console.log('req.session: ', req.session);
+  console.log('req.session: ', req.session);
   console.log('here failed..')
   res.send('FAILED');
 });
@@ -41,9 +41,19 @@ router.post(
 );
 
 router.get('/status', isAuthenticated, (req, res) => {
+  console.log('requser: ', req.user)
   return req.user ? res.send(req.user) : res.status(401).send({
     msg: 'Unauthorized',
   });
 })
+
+router.post('/logout', (req, res, next) => {
+  req.logout((err) => {
+    if (err) { return next(err); }
+    // return res.sendStatus(201);
+    // res.redirect('/')
+    res.sendStatus(200);
+  });
+});
 
 export default router;

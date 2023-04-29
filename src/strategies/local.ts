@@ -22,7 +22,6 @@ passport.deserializeUser(async (id: number, done) => {
 })
 
 const signupUser = async (userName: string, passwordInputted: string, done: Function) => {
-  console.log('signup..')
   try {
     if (passwordInputted.length <= 4 || !userName) { // TODO: more password validations
       done(null, false, {
@@ -41,18 +40,17 @@ const signupUser = async (userName: string, passwordInputted: string, done: Func
 }
 
 const loginUser = async (userName: string, passwordInputted: string, done: Function) => {
-  console.log('authenticateee: ', userName, passwordInputted);
   const user = await prisma.user.findUnique({
     where: { userName }
   })
   if (!user) {
-    return done(null, false);
+    return done(null, false, { message: 'No user with that email' });
   }
   try {
     if (await bcrypt.compare(passwordInputted, user.password)) {
       return done(null, user);
     }
-    return done(null, false);
+    return done(null, false, { message: 'Password incorrect' });
   } catch (error) {
     return done(error);
   }
